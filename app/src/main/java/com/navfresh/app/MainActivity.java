@@ -8,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,17 +15,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private final String url = "http://www.navfresh.com/";
-    //    String[] PERMISSIONS = {Manifest.permission.ACCESS_NETWORK_STATE};
+//    String[] PERMISSIONS = {Manifest.permission.ACCESS_NETWORK_STATE};
 //    private final int PERMISSION_ALL = 11;
     private WebView webView;
     private ProgressBar progressBar;
-    private TextView txtInternetConnection;
-    private SwipeRefreshLayout swipeLayout;
+    private LinearLayout llNetConnection;
 
 
     @Override
@@ -54,20 +51,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void init() {
         webView = findViewById(R.id.webView);
         progressBar = findViewById(R.id.progressBar);
-        txtInternetConnection = findViewById(R.id.txtInternetConnection);
-        txtInternetConnection.setOnClickListener(this);
-        swipeLayout = findViewById(R.id.swipeToRefresh);
-        swipeLayout.setOnRefreshListener(this);
+        llNetConnection = findViewById(R.id.llNetConnection);
+        llNetConnection.setOnClickListener(this);
     }
 
     private void showWebPage() {
         if (isDeviceOnline()) {
-            txtInternetConnection.setVisibility(View.GONE);
+            llNetConnection.setVisibility(View.GONE);
             webView.loadUrl(url);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.setWebViewClient(new NavFreshWebClient());
         } else {
-            txtInternetConnection.setVisibility(View.VISIBLE);
+            llNetConnection.setVisibility(View.VISIBLE);
         }
     }
 
@@ -76,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int vId = view.getId();
         try {
             switch (vId) {
-                case R.id.txtInternetConnection:
+                case R.id.llNetConnection:
                     showWebPage();
                     break;
                 default:
@@ -99,11 +94,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return isDeviceOnLine;
     }
 
-    @Override
-    public void onRefresh() {
-        webView.reload();
-    }
-
     private class NavFreshWebClient extends WebViewClient {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -121,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             progressBar.setVisibility(View.GONE);
-            swipeLayout.setRefreshing(false);
         }
     }
 }
